@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: Talent DNA AI API
+  version: 0.1.0
+  description: Versioned REST contract for the Talent DNA AI modular monolith.
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: /api/v1
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Report API readiness
+      tags: [System]
+      security: []
+      responses:
+        "200":
+          description: API is ready.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "400":
+          $ref: "#/components/responses/ProblemResponse"
+        default:
+          $ref: "#/components/responses/ProblemResponse"
+components:
+  responses:
+    ProblemResponse:
+      description: A problem-details error response.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  schemas:
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, version]
+      properties:
+        status: { type: string, enum: [ok] }
+        service: { type: string, enum: [talent-dna-api] }
+        version: { type: string, example: v1 }
+    Problem:
+      type: object
+      additionalProperties: false
+      required: [type, title, status]
+      properties:
+        type: { type: string, format: uri-reference, default: about:blank }
+        title: { type: string }
+        status: { type: integer, minimum: 400, maximum: 599 }
+        detail: { type: string }
+        instance: { type: string, format: uri-reference }
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }

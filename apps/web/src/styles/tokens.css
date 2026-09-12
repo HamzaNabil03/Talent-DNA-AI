@@ -1,0 +1,16 @@
+:root {
+  --color-canvas: #f7f9fc;
+  --color-surface: #ffffff;
+  --color-border: #d7deea;
+  --color-text-primary: #111827;
+  --color-text-secondary: #5f6b7a;
+  --color-indigo: #3446c8;
+  --color-teal: #007f7e;
+  --color-cyan: #39c6f4;
+  --font-arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-latin: "IBM Plex Sans", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+  --content-max: 1280px;
+  --radius-md: 12px;
+  --focus-ring: 0 0 0 3px rgb(52 70 200 / 25%);
+}

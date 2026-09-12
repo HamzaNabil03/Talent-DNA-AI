@@ -1,0 +1,29 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: talent_dna
+      MYSQL_USER: talent_dna
+      MYSQL_PASSWORD: local_only_password
+      MYSQL_ROOT_PASSWORD: local_only_root_password
+    ports: ["3306:3306"]
+    volumes: ["talent-dna-mysql:/var/lib/mysql"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-plocal_only_root_password",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports: ["1025:1025", "8025:8025"]
+
+volumes:
+  talent-dna-mysql:

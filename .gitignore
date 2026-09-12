@@ -1,0 +1,12 @@
+/.idea/
+/.vscode/
+/.env
+node_modules/
+dist/
+coverage/
+*.log
+apps/api/.env
+apps/api/vendor/
+apps/api/public/app/
+apps/api/storage/*.key
+apps/api/database/*.sqlite

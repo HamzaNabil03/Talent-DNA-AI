@@ -1,0 +1,44 @@
+{
+  "name": "@talent-dna/web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@talent-dna/contracts": "*",
+    "@fontsource/ibm-plex-mono": "latest",
+    "@fontsource/ibm-plex-sans": "latest",
+    "@fontsource/ibm-plex-sans-arabic": "latest",
+    "@tanstack/react-query": "latest",
+    "i18next": "latest",
+    "lucide-react": "latest",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-hook-form": "latest",
+    "react-i18next": "latest",
+    "react-router-dom": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@testing-library/user-event": "latest",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vitest": "latest",
+    "jsdom": "latest"
+  }
+}

@@ -1,0 +1,92 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  color-scheme: light;
+  background: var(--color-canvas);
+}
+body {
+  margin: 0;
+  min-inline-size: 320px;
+  min-block-size: 100vh;
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-arabic);
+}
+html[lang="en"] body {
+  font-family: var(--font-latin);
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-indigo);
+  outline-offset: 3px;
+  box-shadow: var(--focus-ring);
+}
+.bootstrap {
+  display: grid;
+  min-block-size: 100vh;
+  place-items: center;
+  padding-block: 32px;
+  padding-inline: 20px;
+}
+.bootstrap__panel {
+  inline-size: min(100%, 680px);
+  padding-block: clamp(32px, 8vw, 64px);
+  padding-inline: clamp(24px, 7vw, 56px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.bootstrap__eyebrow {
+  color: var(--color-indigo);
+  font-family: var(--font-latin);
+  font-weight: 600;
+}
+.bootstrap h1 {
+  margin-block: 8px 12px;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+.bootstrap p {
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+.bootstrap__status,
+.bootstrap__languages {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-block-start: 24px;
+}
+.bootstrap__status strong {
+  margin-inline-start: auto;
+  color: var(--color-teal);
+}
+.bootstrap__status strong[data-status="error"] {
+  color: var(--color-indigo);
+}
+.bootstrap__languages button {
+  padding-block: 8px;
+  padding-inline: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-indigo);
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

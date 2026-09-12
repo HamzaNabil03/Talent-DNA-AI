@@ -1,0 +1,13 @@
+.git
+.github
+node_modules
+**/node_modules
+**/vendor
+**/.env
+**/.env.*
+!**/.env.example
+**/dist
+**/coverage
+**/*.log
+apps/api/public/app
+apps/api/database/*.sqlite

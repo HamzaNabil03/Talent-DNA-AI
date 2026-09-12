@@ -1,0 +1,8 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "infra/docker/Dockerfile"
+
+[deploy]
+startCommand = "start-worker"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

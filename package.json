@@ -1,0 +1,36 @@
+{
+  "name": "talent-dna-ai",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n web,api,worker -c cyan,blue,magenta \"npm run dev:web\" \"npm run dev:api\" \"npm run dev:worker\"",
+    "dev:web": "npm run dev --workspace @talent-dna/web",
+    "dev:api": "php apps/api/artisan serve",
+    "dev:worker": "php apps/api/artisan queue:work --tries=3",
+    "build": "npm run build --workspace @talent-dna/web",
+    "test": "npm run test:web && npm run test:api",
+    "test:web": "npm run test --workspace @talent-dna/web",
+    "test:api": "composer test --working-dir=apps/api",
+    "lint": "npm run lint:web && npm run format:check && npm run lint:api && npm run analyse:api",
+    "lint:web": "npm run lint --workspace @talent-dna/web",
+    "lint:api": "composer pint --working-dir=apps/api",
+    "analyse:api": "composer analyse --working-dir=apps/api",
+    "typecheck": "npm run typecheck --workspace @talent-dna/web",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "contracts:validate": "redocly lint packages/contracts/openapi.yaml",
+    "contracts:generate": "openapi-typescript packages/contracts/openapi.yaml -o packages/contracts/src/generated.ts && prettier --write packages/contracts/src/generated.ts",
+    "contracts:check": "npm run contracts:generate && git diff --exit-code -- packages/contracts/src/generated.ts",
+    "migrate": "php apps/api/artisan migrate"
+  },
+  "devDependencies": {
+    "@redocly/cli": "latest",
+    "concurrently": "latest",
+    "openapi-typescript": "latest",
+    "prettier": "latest"
+  }
+}
