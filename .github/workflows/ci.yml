@@ -82,6 +82,20 @@ jobs:
       - run: composer test
         working-directory: apps/api
 
+  docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/docker/Dockerfile
+          load: true
+          push: false
+          tags: talent-dna-ai:ci
+      - run: docker image inspect talent-dna-ai:ci
+
   secret-scan:
     runs-on: ubuntu-latest
     steps:

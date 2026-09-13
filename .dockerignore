@@ -10,4 +10,5 @@ node_modules
 **/coverage
 **/*.log
 apps/api/public/app
+apps/api/bootstrap/cache/*.php
 apps/api/database/*.sqlite

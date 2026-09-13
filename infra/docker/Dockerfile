@@ -14,6 +14,8 @@ FROM composer:2 AS vendor
 WORKDIR /app
 COPY apps/api/composer.json apps/api/composer.lock ./
 RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts
+COPY apps/api ./
+RUN composer dump-autoload --no-dev --no-interaction --classmap-authoritative
 
 FROM php:8.3-apache
 RUN apt-get update \
@@ -26,6 +28,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 WORKDIR /var/www/html
 COPY apps/api ./
 COPY --from=vendor /app/vendor ./vendor
+COPY --from=vendor /app/bootstrap/cache ./bootstrap/cache
 COPY --from=frontend /workspace/apps/web/dist ./public/app
 COPY infra/railway/start-web.sh /usr/local/bin/start-web
 COPY infra/railway/start-worker.sh /usr/local/bin/start-worker
