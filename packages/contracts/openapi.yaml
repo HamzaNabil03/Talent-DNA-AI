@@ -1,13 +1,20 @@
 openapi: 3.0.3
 info:
   title: Talent DNA AI API
-  version: 0.1.0
-  description: Versioned REST contract for the Talent DNA AI modular monolith.
+  version: 0.2.0
+  description: Same-origin, cookie-authenticated REST contract for Talent DNA AI.
   license:
     name: MIT
     url: https://opensource.org/license/mit
 servers:
   - url: /api/v1
+tags:
+  - name: System
+    description: Operational readiness endpoints.
+  - name: Identity
+    description: Cookie-session identity, email verification, and password recovery.
+  - name: Consent
+    description: Append-only, versioned user consent records.
 paths:
   /health:
     get:
@@ -20,20 +27,205 @@ paths:
           description: API is ready.
           content:
             application/json:
+              schema: { $ref: "#/components/schemas/HealthResponse" }
+        default: { $ref: "#/components/responses/ProblemResponse" }
+  /auth/register:
+    post:
+      operationId: register
+      summary: Register a student and start a cookie session
+      description: Requires a same-origin CSRF cookie and header. The server assigns the student role and the current terms/privacy versions.
+      tags: [Identity]
+      security: []
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterRequest" }
+      responses:
+        "201": { $ref: "#/components/responses/AuthStateResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+        "429": { $ref: "#/components/responses/ProblemResponse" }
+  /auth/login:
+    post:
+      operationId: login
+      summary: Start a cookie session using email and password
+      tags: [Identity]
+      security: []
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginRequest" }
+      responses:
+        "200": { $ref: "#/components/responses/AuthStateResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+        "429": { $ref: "#/components/responses/ProblemResponse" }
+  /auth/session:
+    get:
+      operationId: getSession
+      summary: Read the current authentication and onboarding state
+      tags: [Identity]
+      security:
+        - cookieAuth: []
+        - {}
+      responses:
+        "200": { $ref: "#/components/responses/AuthStateResponse" }
+  /auth/logout:
+    post:
+      operationId: logout
+      summary: Invalidate the current cookie session
+      tags: [Identity]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      responses:
+        "204": { description: Session invalidated. }
+        "401": { $ref: "#/components/responses/ProblemResponse" }
+  /auth/email/verification-notification:
+    post:
+      operationId: resendVerificationEmail
+      summary: Resend the verification notification
+      tags: [Identity]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      responses:
+        "200":
+          description: Notification sent or account already verified.
+          content:
+            application/json:
               schema:
-                $ref: "#/components/schemas/HealthResponse"
-        "400":
-          $ref: "#/components/responses/ProblemResponse"
-        default:
-          $ref: "#/components/responses/ProblemResponse"
+                type: object
+                additionalProperties: false
+                required: [status]
+                properties:
+                  status:
+                    {
+                      type: string,
+                      enum: [verification_link_sent, already_verified],
+                    }
+        "401": { $ref: "#/components/responses/ProblemResponse" }
+        "429": { $ref: "#/components/responses/ProblemResponse" }
+  /auth/email/verify/{id}/{hash}:
+    get:
+      operationId: verifyEmail
+      summary: Verify an email through a temporary signed URL
+      description: The signed URL expires after 60 minutes. A valid link may verify without an existing session, but never creates a session implicitly.
+      tags: [Identity]
+      security: []
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: hash, in: path, required: true, schema: { type: string } }
+        - {
+            name: expires,
+            in: query,
+            required: true,
+            schema: { type: integer },
+          }
+        - {
+            name: signature,
+            in: query,
+            required: true,
+            schema: { type: string },
+          }
+      responses:
+        "302":
+          {
+            description: "Redirect to consent for the matching session; otherwise redirect to sign-in.",
+          }
+        "403": { $ref: "#/components/responses/ProblemResponse" }
+        "404": { $ref: "#/components/responses/ProblemResponse" }
+  /auth/forgot-password:
+    post:
+      operationId: forgotPassword
+      summary: Process a password-reset link request
+      description: Always returns the same success state whether the email exists or not.
+      tags: [Identity]
+      security: []
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ForgotPasswordRequest" }
+      responses:
+        "200":
+          description: Request processed without disclosing account existence.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StatusResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+        "429": { $ref: "#/components/responses/ProblemResponse" }
+  /auth/reset-password:
+    post:
+      operationId: resetPassword
+      summary: Reset a password using a one-time broker token
+      tags: [Identity]
+      security: []
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ResetPasswordRequest" }
+      responses:
+        "200":
+          description: Password reset and token invalidated.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StatusResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+        "429": { $ref: "#/components/responses/ProblemResponse" }
+  /consents/ai-processing:
+    post:
+      operationId: acceptAiProcessingConsent
+      summary: Append the current AI-processing consent
+      description: Requires a verified student. The server supplies ai-processing-v1; client-supplied versions are ignored.
+      tags: [Consent]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AiConsentRequest" }
+      responses:
+        "200": { $ref: "#/components/responses/AuthStateResponse" }
+        "401": { $ref: "#/components/responses/ProblemResponse" }
+        "403": { $ref: "#/components/responses/ProblemResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: talent-dna-ai-session
+      description: Laravel/Sanctum first-party session cookie. No bearer or personal-access token is returned.
+  parameters:
+    CsrfToken:
+      name: X-XSRF-TOKEN
+      in: header
+      required: true
+      description: Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests.
+      schema: { type: string }
   responses:
+    AuthStateResponse:
+      description: Current identity and onboarding state.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/AuthState" }
     ProblemResponse:
       description: A problem-details error response.
       content:
         application/problem+json:
-          schema:
-            $ref: "#/components/schemas/Problem"
+          schema: { $ref: "#/components/schemas/Problem" }
+    ValidationProblemResponse:
+      description: Validation or generic authentication failure.
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/Problem" }
+        application/json:
+          schema: { $ref: "#/components/schemas/LaravelValidationError" }
   schemas:
     HealthResponse:
       type: object
@@ -43,6 +235,98 @@ components:
         status: { type: string, enum: [ok] }
         service: { type: string, enum: [talent-dna-api] }
         version: { type: string, example: v1 }
+    UserRole:
+      type: string
+      enum: [student, admin]
+    NextStep:
+      type: string
+      nullable: true
+      enum: [verify_email, consent, profile_setup, admin]
+    PublicUser:
+      type: object
+      additionalProperties: false
+      required: [id, name, email, role]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string, format: email }
+        role: { $ref: "#/components/schemas/UserRole" }
+    ConsentState:
+      type: object
+      additionalProperties: false
+      required: [terms, privacy, ai_processing]
+      properties:
+        terms: { type: boolean }
+        privacy: { type: boolean }
+        ai_processing: { type: boolean }
+    AuthState:
+      type: object
+      additionalProperties: false
+      required: [authenticated, user, email_verified, consents, next_step]
+      properties:
+        authenticated: { type: boolean }
+        user:
+          type: object
+          nullable: true
+          allOf: [{ $ref: "#/components/schemas/PublicUser" }]
+        email_verified: { type: boolean }
+        consents: { $ref: "#/components/schemas/ConsentState" }
+        next_step: { $ref: "#/components/schemas/NextStep" }
+    RegisterRequest:
+      type: object
+      additionalProperties: false
+      required:
+        [
+          name,
+          email,
+          password,
+          password_confirmation,
+          accept_terms_and_privacy,
+          locale,
+        ]
+      properties:
+        name: { type: string, maxLength: 255 }
+        email: { type: string, format: email }
+        password: { type: string, format: password, minLength: 10 }
+        password_confirmation: { type: string, format: password, minLength: 10 }
+        accept_terms_and_privacy: { type: boolean, enum: [true] }
+        locale: { type: string, enum: [ar, en] }
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+    ForgotPasswordRequest:
+      type: object
+      additionalProperties: false
+      required: [email]
+      properties:
+        email: { type: string, format: email }
+        locale: { type: string, enum: [ar, en] }
+    ResetPasswordRequest:
+      type: object
+      additionalProperties: false
+      required: [token, email, password, password_confirmation]
+      properties:
+        token: { type: string }
+        email: { type: string, format: email }
+        password: { type: string, format: password, minLength: 10 }
+        password_confirmation: { type: string, format: password, minLength: 10 }
+        locale: { type: string, enum: [ar, en] }
+    AiConsentRequest:
+      type: object
+      additionalProperties: false
+      required: [accept_ai_processing]
+      properties:
+        accept_ai_processing: { type: boolean, enum: [true] }
+    StatusResponse:
+      type: object
+      additionalProperties: false
+      required: [status]
+      properties:
+        status: { type: string }
     Problem:
       type: object
       additionalProperties: false
@@ -53,6 +337,17 @@ components:
         status: { type: integer, minimum: 400, maximum: 599 }
         detail: { type: string }
         instance: { type: string, format: uri-reference }
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+    LaravelValidationError:
+      type: object
+      additionalProperties: false
+      required: [message, errors]
+      properties:
+        message: { type: string }
         errors:
           type: object
           additionalProperties:
