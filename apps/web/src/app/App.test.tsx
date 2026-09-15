@@ -51,6 +51,38 @@ describe("identity, authentication, and consent onboarding", () => {
     vi.restoreAllMocks();
   });
 
+  it("renders the public Arabic landing page with the supplied DNA asset", async () => {
+    window.history.pushState({}, "", "/");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(anonymous)));
+    const { container } = render(<App />);
+    expect(
+      await screen.findByRole("heading", { name: /قدراتك، أصبحت مرئية/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByRole("link", { name: "اكتشف قدراتي" })[0],
+    ).toHaveAttribute("href", "/auth/sign-up");
+    expect(
+      container.querySelector(".landing-hero__visual img"),
+    ).toHaveAttribute("src", expect.stringContaining("landing-dna.svg"));
+    expect(document.title).toBe("Talent DNA AI — اكتشف قدراتك الحقيقية");
+  });
+
+  it("keeps the landing page while switching to English LTR", async () => {
+    window.history.pushState({}, "", "/");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(anonymous)));
+    render(<App />);
+    await userEvent.click(
+      await screen.findByRole("button", { name: "English" }),
+    );
+    expect(document.documentElement).toHaveAttribute("dir", "ltr");
+    expect(
+      await screen.findByRole("heading", {
+        name: /Your capabilities. Made visible/,
+      }),
+    ).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/");
+  });
+
   it("renders sign-up without social login and toggles RTL/LTR", async () => {
     window.history.pushState({}, "", "/auth/sign-up");
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(anonymous)));

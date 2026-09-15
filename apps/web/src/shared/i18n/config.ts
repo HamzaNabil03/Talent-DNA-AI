@@ -129,6 +129,175 @@ void i18n.use(initReactI18next).init({
             body: "نجمع الاسم والبريد وبيانات الجلسة اللازمة، ونحفظ كلمة المرور كـHash. قد تضيف لاحقًا معلومات الملف والأدلة والروابط ونتائج التقييم لتشغيل الحساب واستخراج مهارات محتملة وبناء نتائج تراجعها وشرح المطابقة. الملف والأدلة خاصة افتراضيًا ولا ينشر التحليل شيئًا تلقائيًا؛ أي نشر عام مستقبلي يحتاج فعلًا صريحًا. قد يعالج مزود الاستضافة وBrevo الحد الأدنى اللازم، ولا يدعي المشروع بيع بياناتك. يُسجل القبول بالإصدار privacy-v1، وحذف الحساب غير منفذ في هذه المرحلة.",
           },
         },
+        landing: {
+          meta: {
+            title: "Talent DNA AI — اكتشف قدراتك الحقيقية",
+            description:
+              "حوّل خبراتك ومشاريعك إلى صورة واضحة لقدراتك مع Talent DNA AI.",
+          },
+          nav: {
+            label: "التنقل الرئيسي",
+            open: "فتح القائمة",
+            close: "إغلاق القائمة",
+            how: "كيف تعمل",
+            methodology: "المنهجية",
+            trust: "الثقة والأدلة",
+            organizations: "للمؤسسات",
+            signIn: "تسجيل الدخول",
+            discover: "اكتشف قدراتي",
+          },
+          hero: {
+            badge: "اكتشاف المواهب بالذكاء الاصطناعي",
+            titleStart: "قدراتك،",
+            titleAccent: "أصبحت مرئية.",
+            subtitleStart: "اكتشف ما",
+            subtitleAccent: "تجيده فعلاً.",
+            body: "يحوّل Talent DNA AI مشاريعك وخبراتك ومهاراتك وتقييماتك إلى صورة واضحة عمّا تستطيع فعله حقًا — ليساعدك على اكتشاف نقاط قوتك، وإثبات قدراتك، وإيجاد الفرص التي تناسبك.",
+            primary: "اكتشف قدراتي",
+            secondary: "شاهد كيف يعمل Talent DNA",
+          },
+          metrics: {
+            label: "مؤشرات Talent DNA",
+            privacy: { value: "100%", label: "خصوصية وأمان بياناتك" },
+            opportunities: { value: "+250K", label: "فرصة مهنية موصى بها" },
+            analysis: { value: "+2.5M", label: "تحليل مهاري ذكي" },
+            users: { value: "+500K", label: "مستخدم حول العالم" },
+          },
+          capability: {
+            titleStart: "قدرات حقيقية،",
+            titleAccent: "لا مجرد ادعاءات.",
+            body: "يتجاوز Talent DNA AI ما تقوله عن نفسك؛ ليبني صورة أوضح عن القدرة الفعلية بجمع الأدلة وتحليل الذكاء الاصطناعي والتقييم.",
+            cards: {
+              self: {
+                title: "مصرّح بها ذاتيًا",
+                body: "ما تقول إنك قادر على فعله.",
+              },
+              ai: {
+                title: "مستنتجة بالذكاء الاصطناعي",
+                body: "ما يستنتجه الذكاء الاصطناعي من خبراتك ومشاريعك.",
+              },
+              evidence: {
+                title: "مدعومة بالأدلة",
+                body: "ما تثبته مشاريعك وأعمالك وإنجازاتك.",
+              },
+              assessment: {
+                title: "مدعومة بالتقييم",
+                body: "ما تقيسه التقييمات المعتمدة.",
+              },
+            },
+          },
+          profile: {
+            label: "نموذج بطاقة Talent DNA",
+            score: "درجة الموهبة",
+            description:
+              "بصمة قدرات مبنية على الأدلة والتقييمات وتحليل الذكاء الاصطناعي.",
+            skills: {
+              creative: "التفكير الإبداعي",
+              problem: "حل المشكلات",
+              communication: "التواصل",
+              adaptability: "القدرة على التكيف",
+              technical: "المهارات التقنية",
+            },
+            proof: {
+              projects: "3 مشاريع محللة",
+              experience: "خبرة عملية مراجعة",
+              portfolio: "معرض أعمال مراجع",
+              validated: "مهارات موثقة",
+            },
+          },
+          journey: {
+            titleStart: "كيف يعمل",
+            titleAccent: "Talent DNA",
+            titleEnd: "؟",
+            body: "من اكتشاف نقاط قوتك إلى معرفة أين يمكن أن تأخذك.",
+            steps: {
+              discover: {
+                title: "الاكتشاف",
+                body: "افهم خبراتك واهتماماتك ونقاط قوتك وإمكاناتك.",
+              },
+              prove: {
+                title: "الإثبات",
+                body: "اربط قدراتك بمشاريع حقيقية وأدلة وتقييمات.",
+              },
+              match: {
+                title: "المطابقة",
+                body: "اكتشف الأدوار والفرص والمسارات المهنية المتوافقة مع Talent DNA الخاص بك.",
+              },
+              grow: {
+                title: "النمو",
+                body: "تابع تطورك وعزّز قدراتك باستمرار.",
+              },
+            },
+          },
+          trust: {
+            titleStart: "الثقة",
+            titleAccent: "بالتصميم.",
+            body: "كل إشارة قدرة شفافة وقابلة للتتبع وموسومة بوضوح؛ لا يتعامل Talent DNA AI مع كل استنتاج كحقيقة، بل يحمل كل إشارة مستوى التحقق الخاص بها.",
+            cards: {
+              self: {
+                title: "مصرّح بها ذاتيًا",
+                question: "ما تقوله عن نفسك",
+                body: "المهارات والخبرات والاهتمامات والقدرات التي تذكرها بنفسك.",
+                tag: "مذكورة من المستخدم",
+              },
+              ai: {
+                title: "مستنتجة بالذكاء الاصطناعي",
+                question: "ما يستنتجه الذكاء الاصطناعي",
+                body: "أنماط وقدرات مستنتجة من خبراتك ومشاريعك وسلوكك.",
+                tag: "تحليل الذكاء الاصطناعي",
+              },
+              evidence: {
+                title: "مدعومة بالأدلة",
+                question: "ما تثبته أعمالك",
+                body: "قدرات مدعومة بمشاريع حقيقية ونماذج أعمال وإنجازات.",
+                tag: "أدلة موثقة",
+              },
+              assessment: {
+                title: "مدعومة بالتقييم",
+                question: "ما تقيسه التقييمات المعتمدة",
+                body: "قدرات مدعومة بتقييمات منظمة ونتائج قابلة للقياس.",
+                tag: "تقييمات معتمدة",
+              },
+            },
+          },
+          cta: {
+            title: "هل أنت مستعد لاكتشاف Talent DNA الخاص بك؟",
+            body: "حوّل خبراتك إلى صورة أوضح عن قدراتك — واكتشف إلى أين يمكن أن تأخذك.",
+            primary: "اكتشف قدراتي",
+            secondary: "شاهد كيف يعمل Talent DNA",
+          },
+          footer: {
+            tagline: "اكتشف ما تجيده فعلاً.",
+            social: "روابط التواصل الاجتماعي",
+            platform: {
+              title: "المنصة",
+              one: "الاكتشاف",
+              two: "Talent DNA",
+              three: "التقييمات",
+              four: "الفرص",
+            },
+            resources: {
+              title: "الموارد",
+              one: "كيف تعمل",
+              two: "المنهجية",
+              three: "الثقة والأدلة",
+              four: "الأسئلة الشائعة",
+            },
+            company: {
+              title: "الشركة",
+              one: "من نحن",
+              two: "تواصل معنا",
+              three: "الوظائف",
+              four: "البيئة الشاملة",
+            },
+            legal: {
+              title: "قانوني",
+              one: "سياسة الخصوصية",
+              two: "شروط الاستخدام",
+            },
+            copyright: "جميع الحقوق محفوظة.",
+          },
+        },
         profileHandoff: {
           title: "اكتملت بوابة الموافقة",
           body: "إعداد الملف الشخصي يبدأ في المرحلة التالية. لم تُضف أي حقول أو بيانات ملف تجريبية هنا.",
@@ -261,6 +430,178 @@ void i18n.use(initReactI18next).init({
           privacy: {
             title: "Privacy notice — privacy-v1",
             body: "We collect name, email, and required session data, and store passwords as hashes. Later you may add profile details, evidence, links, and assessment results to operate the account, extract potential skills, build user-reviewed results, and explain matching. Profiles and evidence are private by default; analysis publishes nothing automatically, and future public publication requires explicit action. Hosting providers and Brevo may process the minimum required data. The project does not claim to sell user data. Acceptance is recorded as privacy-v1. Account deletion is not implemented in this phase.",
+          },
+        },
+        landing: {
+          meta: {
+            title: "Talent DNA AI — Make your capabilities visible",
+            description:
+              "Turn your projects and experiences into a clear picture of your capabilities with Talent DNA AI.",
+          },
+          nav: {
+            label: "Main navigation",
+            open: "Open menu",
+            close: "Close menu",
+            how: "How It Works",
+            methodology: "Methodology",
+            trust: "Trust & Evidence",
+            organizations: "For Organizations",
+            signIn: "Sign In",
+            discover: "Discover My Capabilities",
+          },
+          hero: {
+            badge: "AI-powered talent discovery",
+            titleStart: "Your capabilities.",
+            titleAccent: "Made visible.",
+            subtitleStart: "Discover what you can",
+            subtitleAccent: "actually do.",
+            body: "Talent DNA AI transforms your projects, experiences, skills, and assessments into a clear picture of what you can actually do — helping you discover your strengths, prove your capabilities, and find opportunities that fit you.",
+            primary: "Discover My Capabilities",
+            secondary: "See how Talent DNA works",
+          },
+          metrics: {
+            label: "Talent DNA indicators",
+            privacy: { value: "100%", label: "Privacy and data security" },
+            opportunities: {
+              value: "+250K",
+              label: "Recommended opportunities",
+            },
+            analysis: { value: "+2.5M", label: "Intelligent skill analyses" },
+            users: { value: "+500K", label: "Users around the world" },
+          },
+          capability: {
+            titleStart: "Capability,",
+            titleAccent: "not claims.",
+            body: "Talent DNA goes beyond what people say about themselves. It builds a clearer picture of capability by combining evidence, AI analysis, and assessments.",
+            cards: {
+              self: {
+                title: "Self-declared",
+                body: "What you say you can do.",
+              },
+              ai: {
+                title: "AI-inferred",
+                body: "What AI identifies from your experiences and work.",
+              },
+              evidence: {
+                title: "Evidence-supported",
+                body: "What your real projects and work demonstrate.",
+              },
+              assessment: {
+                title: "Assessment-supported",
+                body: "What validated assessments measure.",
+              },
+            },
+          },
+          profile: {
+            label: "Talent DNA profile card example",
+            score: "Talent Score",
+            description:
+              "A capability fingerprint generated from evidence, assessments, and AI analysis across five core areas.",
+            skills: {
+              creative: "Creative Thinking",
+              problem: "Problem Solving",
+              communication: "Communication",
+              adaptability: "Adaptability",
+              technical: "Technical Skills",
+            },
+            proof: {
+              projects: "3 Projects analyzed",
+              experience: "Experience analyzed",
+              portfolio: "Portfolio reviewed",
+              validated: "Skills cross-validated",
+            },
+          },
+          journey: {
+            titleStart: "How",
+            titleAccent: "Talent DNA",
+            titleEnd: "works",
+            body: "From discovering your strengths to finding where they can take you.",
+            steps: {
+              discover: {
+                title: "Discover",
+                body: "Understand your experiences, interests, strengths, and potential.",
+              },
+              prove: {
+                title: "Prove",
+                body: "Connect your capabilities to real projects, evidence, and assessments.",
+              },
+              match: {
+                title: "Match",
+                body: "Discover roles, opportunities, and career paths aligned with your Talent DNA.",
+              },
+              grow: {
+                title: "Grow",
+                body: "Track your development and continuously strengthen your capabilities.",
+              },
+            },
+          },
+          trust: {
+            titleStart: "Trust by",
+            titleAccent: "design.",
+            body: "Every capability signal is transparent, traceable, and clearly labeled. Talent DNA never treats an AI insight as fact — each signal carries its own level of verification.",
+            cards: {
+              self: {
+                title: "Self-declared",
+                question: "What you tell us.",
+                body: "Skills, experiences, interests, and capabilities you report yourself.",
+                tag: "User reported",
+              },
+              ai: {
+                title: "AI-inferred",
+                question: "What AI identifies.",
+                body: "Patterns and capabilities inferred from your experiences, projects, and behavior.",
+                tag: "AI analysis",
+              },
+              evidence: {
+                title: "Evidence-supported",
+                question: "What your work proves.",
+                body: "Capabilities supported by real projects, portfolios, work samples, and achievements.",
+                tag: "Evidence verified",
+              },
+              assessment: {
+                title: "Assessment-supported",
+                question: "What validated assessments measure.",
+                body: "Capabilities supported by structured assessments and measurable results.",
+                tag: "Assessment validated",
+              },
+            },
+          },
+          cta: {
+            title: "Ready to discover your Talent DNA?",
+            body: "Turn your experiences into a clearer picture of your capabilities — and discover where they can take you next.",
+            primary: "Discover My Capabilities",
+            secondary: "See how Talent DNA works",
+          },
+          footer: {
+            tagline: "Discover what you can actually do.",
+            social: "Social media links",
+            platform: {
+              title: "Platform",
+              one: "Discover",
+              two: "Talent DNA",
+              three: "Assessments",
+              four: "Opportunities",
+            },
+            resources: {
+              title: "Resources",
+              one: "How It Works",
+              two: "Methodology",
+              three: "Trust & Evidence",
+              four: "FAQ",
+            },
+            company: {
+              title: "Company",
+              one: "About",
+              two: "Contact",
+              three: "Careers",
+              four: "Inclusive Environment",
+            },
+            legal: {
+              title: "Legal",
+              one: "Privacy Policy",
+              two: "Terms of Use",
+            },
+            copyright: "All rights reserved.",
           },
         },
         profileHandoff: {

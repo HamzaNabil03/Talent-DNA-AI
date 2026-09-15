@@ -17,6 +17,7 @@ import {
   VerifyEmailPage,
 } from "../features/auth/AuthPages";
 import { ConsentPage } from "../features/consent/ConsentPage";
+import { LandingPage } from "../features/landing/LandingPage";
 import { ProfileSetupHandoff } from "../features/profile/ProfileSetupHandoff";
 import { authApi } from "../shared/api/auth";
 import {
@@ -124,6 +125,7 @@ export function App() {
       <BrowserRouter>
         <SessionProvider>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route
               path="/auth/sign-up"
               element={
