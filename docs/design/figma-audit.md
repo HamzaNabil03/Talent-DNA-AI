@@ -1,6 +1,6 @@
 # Figma design audit
 
-Audit date: 2026-09-11
+Audit dates: 2026-09-11 and 2026-09-14
 
 Figma document identifier: `Emt0ENtXx8ifGrddVtFxlD`
 
@@ -16,4 +16,15 @@ Access mode used: connected design-context reads only; no Figma writes were atte
 
 The design-context response exposed rendered properties and node names, but did not prove a reusable Figma variable collection, component library, responsive mobile node, or comprehensive spacing scale. No such metadata is claimed. The architecture's locked tokens and IBM Plex font family remain the foundation contract; the observed Cairo headings and purple gradient are recorded for a later design reconciliation rather than silently adopted.
 
-No product page has been implemented in this phase. The neutral bootstrap uses only the locked foundation tokens. Additional screen-level context, responsive variants, interaction states, and asset exports must be reviewed in the relevant feature phase.
+No product page was implemented during the foundation phase. Its neutral bootstrap used only the locked foundation tokens. Additional screen-level context, responsive variants, interaction states, and asset exports are reviewed in their relevant feature phase.
+
+## Prompt 02 identity and consent inspection
+
+The following nodes were read through Figma Design Context on 2026-09-14. Figma remained strictly read-only; no node, component, variable, style, page, or asset was changed or published.
+
+- `352:3554` — Arabic desktop sign-up composition and Auth layout.
+- `423:3669` — Arabic desktop sign-in composition and Auth layout.
+- `310:22116` — F03 privacy and AI-processing consent composition.
+- `154:6473` — reference vector mark, checked again before reusing project branding.
+
+The exact short-lived Figma exports needed by the implementation were committed as `auth-hero.png`, `talent-dna-logo.png`, `auth-background.svg`, and `consent-background.svg`. Social sign-in controls and the login name field visible in the source design were intentionally omitted per the approved product decisions. Cairo/Inter properties were mapped to the frozen IBM Plex families rather than adding fonts.
