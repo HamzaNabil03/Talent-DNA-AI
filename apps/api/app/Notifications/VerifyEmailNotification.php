@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 class VerifyEmailNotification extends VerifyEmail
 {
     /** @return array<int, string> */
-    public function via(object $notifiable): array
+    public function via($notifiable)
     {
         return config('services.brevo.key') ? [BrevoChannel::class] : ['mail'];
     }
