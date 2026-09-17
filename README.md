@@ -34,3 +34,13 @@ npm run migrate
 | `npm run migrate`            | Run Laravel migrations                            |
 
 Vite proxies `/api` to Laravel on port 8000 during local development. The production image builds the SPA into Laravel's `public/app` directory and serves browser routes and `/api/v1` from one origin.
+
+## Identity administration
+
+Public registration always creates a student. To create or reconcile the internal admin account, set `ADMIN_NAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` in the runtime environment and run this seeder explicitly:
+
+```bash
+php apps/api/artisan db:seed --class=AdminUserSeeder
+```
+
+No default admin credentials are stored in Git. Email verification and password-reset notifications use Laravel SMTP configuration; `.env.example` contains the Brevo-compatible variable names without credentials.

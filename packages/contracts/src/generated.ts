@@ -21,6 +21,171 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/auth/register": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Register a student and start a cookie session
+     * @description Requires a same-origin CSRF cookie and header. The server assigns the student role and the current terms/privacy versions.
+     */
+    post: operations["register"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Start a cookie session using email and password */
+    post: operations["login"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/session": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Read the current authentication and onboarding state */
+    get: operations["getSession"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Invalidate the current cookie session */
+    post: operations["logout"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/email/verification-notification": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Resend the verification notification */
+    post: operations["resendVerificationEmail"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/email/verify/{id}/{hash}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Verify an email through a temporary signed URL
+     * @description The signed URL expires after 60 minutes. A valid link may verify without an existing session, but never creates a session implicitly.
+     */
+    get: operations["verifyEmail"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/forgot-password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Process a password-reset link request
+     * @description Always returns the same success state whether the email exists or not.
+     */
+    post: operations["forgotPassword"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/reset-password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Reset a password using a one-time broker token */
+    post: operations["resetPassword"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/consents/ai-processing": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Append the current AI-processing consent
+     * @description Requires a verified student. The server supplies ai-processing-v1; client-supplied versions are ignored.
+     */
+    post: operations["acceptAiProcessingConsent"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -32,6 +197,72 @@ export interface components {
       service: "talent-dna-api";
       /** @example v1 */
       version: string;
+    };
+    /** @enum {string} */
+    UserRole: "student" | "admin";
+    /** @enum {string|null} */
+    NextStep: "verify_email" | "consent" | "profile_setup" | "admin" | null;
+    PublicUser: {
+      id: number;
+      name: string;
+      /** Format: email */
+      email: string;
+      role: components["schemas"]["UserRole"];
+    };
+    ConsentState: {
+      terms: boolean;
+      privacy: boolean;
+      ai_processing: boolean;
+    };
+    AuthState: {
+      authenticated: boolean;
+      user: components["schemas"]["PublicUser"] | null;
+      email_verified: boolean;
+      consents: components["schemas"]["ConsentState"];
+      next_step: components["schemas"]["NextStep"];
+    };
+    RegisterRequest: {
+      name: string;
+      /** Format: email */
+      email: string;
+      /** Format: password */
+      password: string;
+      /** Format: password */
+      password_confirmation: string;
+      /** @enum {boolean} */
+      accept_terms_and_privacy: true;
+      /** @enum {string} */
+      locale: "ar" | "en";
+    };
+    LoginRequest: {
+      /** Format: email */
+      email: string;
+      /** Format: password */
+      password: string;
+    };
+    ForgotPasswordRequest: {
+      /** Format: email */
+      email: string;
+      /** @enum {string} */
+      locale?: "ar" | "en";
+    };
+    ResetPasswordRequest: {
+      token: string;
+      /** Format: email */
+      email: string;
+      /** Format: password */
+      password: string;
+      /** Format: password */
+      password_confirmation: string;
+      /** @enum {string} */
+      locale?: "ar" | "en";
+    };
+    AiConsentRequest: {
+      /** @enum {boolean} */
+      accept_ai_processing: true;
+    };
+    StatusResponse: {
+      status: string;
     };
     Problem: {
       /**
@@ -48,8 +279,23 @@ export interface components {
         [key: string]: string[];
       };
     };
+    LaravelValidationError: {
+      message: string;
+      errors: {
+        [key: string]: string[];
+      };
+    };
   };
   responses: {
+    /** @description Current identity and onboarding state. */
+    AuthStateResponse: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["AuthState"];
+      };
+    };
     /** @description A problem-details error response. */
     ProblemResponse: {
       headers: {
@@ -59,8 +305,21 @@ export interface components {
         "application/problem+json": components["schemas"]["Problem"];
       };
     };
+    /** @description Validation or generic authentication failure. */
+    ValidationProblemResponse: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        "application/problem+json": components["schemas"]["Problem"];
+        "application/json": components["schemas"]["LaravelValidationError"];
+      };
+    };
   };
-  parameters: never;
+  parameters: {
+    /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+    CsrfToken: string;
+  };
   requestBodies: never;
   headers: never;
   pathItems: never;
@@ -85,8 +344,217 @@ export interface operations {
           "application/json": components["schemas"]["HealthResponse"];
         };
       };
-      400: components["responses"]["ProblemResponse"];
       default: components["responses"]["ProblemResponse"];
+    };
+  };
+  register: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RegisterRequest"];
+      };
+    };
+    responses: {
+      201: components["responses"]["AuthStateResponse"];
+      422: components["responses"]["ValidationProblemResponse"];
+      429: components["responses"]["ProblemResponse"];
+    };
+  };
+  login: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginRequest"];
+      };
+    };
+    responses: {
+      200: components["responses"]["AuthStateResponse"];
+      422: components["responses"]["ValidationProblemResponse"];
+      429: components["responses"]["ProblemResponse"];
+    };
+  };
+  getSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: components["responses"]["AuthStateResponse"];
+    };
+  };
+  logout: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Session invalidated. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components["responses"]["ProblemResponse"];
+    };
+  };
+  resendVerificationEmail: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Notification sent or account already verified. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            status: "verification_link_sent" | "already_verified";
+          };
+        };
+      };
+      401: components["responses"]["ProblemResponse"];
+      429: components["responses"]["ProblemResponse"];
+    };
+  };
+  verifyEmail: {
+    parameters: {
+      query: {
+        expires: number;
+        signature: string;
+      };
+      header?: never;
+      path: {
+        id: number;
+        hash: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Redirect to consent for the matching session; otherwise redirect to sign-in. */
+      302: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["ProblemResponse"];
+      404: components["responses"]["ProblemResponse"];
+    };
+  };
+  forgotPassword: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ForgotPasswordRequest"];
+      };
+    };
+    responses: {
+      /** @description Request processed without disclosing account existence. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+      429: components["responses"]["ProblemResponse"];
+    };
+  };
+  resetPassword: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ResetPasswordRequest"];
+      };
+    };
+    responses: {
+      /** @description Password reset and token invalidated. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StatusResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+      429: components["responses"]["ProblemResponse"];
+    };
+  };
+  acceptAiProcessingConsent: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AiConsentRequest"];
+      };
+    };
+    responses: {
+      200: components["responses"]["AuthStateResponse"];
+      401: components["responses"]["ProblemResponse"];
+      403: components["responses"]["ProblemResponse"];
+      422: components["responses"]["ValidationProblemResponse"];
     };
   };
 }
