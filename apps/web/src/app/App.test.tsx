@@ -308,8 +308,61 @@ describe("identity, authentication, and consent onboarding", () => {
     expect(submit).toBeEnabled();
     await userEvent.click(submit);
     expect(
-      await screen.findByRole("heading", { name: "اكتملت بوابة الموافقة" }),
+      await screen.findByRole("heading", { name: "إلى أين تتجه؟" }),
     ).toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
   });
+
+  it.each([
+    "/builder/direction",
+    "/builder/projects",
+    "/builder/evidence",
+    "/builder/vision",
+    "/review",
+    "/analysis/queued",
+    "/analysis/failure",
+    "/analysis/empty",
+    "/analysis/confirmation",
+    "/dna",
+    "/dna/skills/creative-thinking",
+    "/readiness",
+    "/readiness/resume",
+    "/assessment",
+    "/assessment/resume",
+    "/assessment/fail",
+    "/results",
+    "/opportunities",
+    "/card-builder/private",
+    "/card-builder/live",
+    "/card-builder/revoked",
+    "/privacy/private",
+    "/privacy/live",
+    "/privacy/revoked",
+  ])("renders the completed-profile experience at %s", async (path) => {
+    window.history.pushState({}, "", path);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(complete)));
+
+    render(<App />);
+
+    await waitFor(() => expect(window.location.pathname).toBe(path));
+    expect(screen.getByRole("main")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        name: "مرحبًا بعودتك إلى Talent DNA.",
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it.each(["/public-card/private", "/public-card/live"])(
+    "renders the public experience without authentication at %s",
+    async (path) => {
+      window.history.pushState({}, "", path);
+      vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(anonymous)));
+
+      render(<App />);
+
+      expect(await screen.findByRole("main")).toBeInTheDocument();
+      expect(window.location.pathname).toBe(path);
+    },
+  );
 });

@@ -61,7 +61,11 @@ class ResetPasswordNotification extends ResetPassword
         ];
     }
 
-    private function resetUrl(object $notifiable): string
+    /**
+     * @param  mixed  $notifiable
+     * @return string
+     */
+    protected function resetUrl($notifiable)
     {
         return rtrim((string) config('app.frontend_url'), '/').'/auth/reset-password?token='.urlencode($this->token).'&email='.urlencode((string) $notifiable->getEmailForPasswordReset());
     }
