@@ -2,6 +2,6 @@
 set -eu
 
 php artisan config:cache
-php artisan route:cache
 php artisan migrate --force
-exec apache2-foreground
+
+exec php artisan serve --host=0.0.0.0 --port="${PORT:-80}"

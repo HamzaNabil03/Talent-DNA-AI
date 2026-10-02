@@ -1,0 +1,5 @@
+apps/api/bootstrap/cache/
+apps/api/storage/
+apps/api/vendor/
+apps/web/dist/
+node_modules/
