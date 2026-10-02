@@ -7,6 +7,19 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Talent DNA profile/evidence local setup (XAMPP or MariaDB)
+
+1. Create or select a dedicated Talent DNA database and set the existing `DB_*` values in `.env`.
+2. Keep `EVIDENCE_DISK=evidence` for private local files. No public storage link is required.
+3. Run `php artisan migrate` from `apps/api`. The profile migration safely backfills missing profiles with an idempotent insert and preserves existing users.
+4. Ensure PHP can write to `storage` and `bootstrap/cache`, then run `php artisan serve` (or point Apache at `apps/api/public`).
+
+Never run `migrate:fresh` against the local development or production database. Automated tests use the isolated SQLite in-memory database defined by `phpunit.xml`; CI continues to verify migrations against MySQL separately.
+
+See `docs/product/profile-evidence-stage.md` for the evidence reader, Gemini privacy boundary, queue requirements, validation rules, and private shared-storage readiness.
+
+Run `php artisan queue:work --tries=3 --timeout=180` alongside the web process. Create a server-only Gemini key in Google AI Studio; never expose it through a `VITE_*` variable or commit it. If the key is absent, the API persists `not_configured` and the UI explains the missing configuration without fake output.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

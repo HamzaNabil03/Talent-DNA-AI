@@ -15,6 +15,12 @@ tags:
     description: Cookie-session identity, email verification, and password recovery.
   - name: Consent
     description: Append-only, versioned user consent records.
+  - name: Profile
+    description: Student-owned profile input, projects, and private evidence.
+  - name: Analysis
+    description: Explicit, asynchronous private-evidence analysis and selection review.
+  - name: Talent DNA
+    description: Immutable user-confirmed Talent DNA versions without scores or readiness verdicts.
 paths:
   /health:
     get:
@@ -194,6 +200,353 @@ paths:
         "401": { $ref: "#/components/responses/ProblemResponse" }
         "403": { $ref: "#/components/responses/ProblemResponse" }
         "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+  /profile:
+    get:
+      operationId: getProfile
+      summary: Read the current student's profile input
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: Profile input and progress.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProfileResponse" }
+        "401": { $ref: "#/components/responses/ProblemResponse" }
+        "403": { $ref: "#/components/responses/ProblemResponse" }
+  /profile/direction:
+    patch:
+      operationId: updateProfileDirection
+      summary: Save a partial direction draft
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DirectionInput" }
+      responses:
+        "200":
+          description: Direction saved.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProfileResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+  /profile/vision:
+    patch:
+      operationId: updateProfileVision
+      summary: Save a partial student-view draft
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VisionInput" }
+      responses:
+        "200":
+          description: Student view saved.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProfileResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+  /profile/complete:
+    post:
+      operationId: completeProfileInput
+      summary: Validate and mark profile input complete
+      description: The server derives completion. This does not imply analysis, assessment, or a Talent DNA snapshot.
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      responses:
+        "200":
+          description: Input requirements met.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProfileResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+  /projects:
+    get:
+      operationId: listProjects
+      summary: List the current student's projects
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: Owned projects.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectListResponse" }
+        "401": { $ref: "#/components/responses/ProblemResponse" }
+    post:
+      operationId: createProject
+      summary: Create a project
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProjectInput" }
+      responses:
+        "201":
+          description: Project created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+  /projects/{project}:
+    parameters:
+      - { name: project, in: path, required: true, schema: { type: integer } }
+    get:
+      operationId: getProject
+      summary: Read an owned project
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: Owned project.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectResponse" }
+        "403": { $ref: "#/components/responses/ProblemResponse" }
+    put:
+      operationId: updateProject
+      summary: Replace an owned project
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProjectInput" }
+      responses:
+        "200":
+          description: Project updated.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+    delete:
+      operationId: deleteProject
+      summary: Delete an unlinked owned project
+      description: Refuses deletion while evidence is linked; evidence is never deleted implicitly.
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      responses:
+        "204": { description: Project deleted. }
+        "409": { $ref: "#/components/responses/ProblemResponse" }
+  /evidence:
+    get:
+      operationId: listEvidence
+      summary: List the current student's private evidence
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: Owned private evidence and temporary limits.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvidenceListResponse" }
+        "401": { $ref: "#/components/responses/ProblemResponse" }
+    post:
+      operationId: createEvidence
+      summary: Upload a private file or save an unread external link
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: { $ref: "#/components/schemas/EvidenceInput" }
+      responses:
+        "201":
+          description: Evidence saved; no content reading or analysis has occurred.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvidenceResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+        "429": { $ref: "#/components/responses/ProblemResponse" }
+  /evidence/{evidence}:
+    parameters:
+      - { name: evidence, in: path, required: true, schema: { type: integer } }
+    get:
+      operationId: getEvidence
+      summary: Read owned evidence metadata
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: Owned evidence metadata without an internal storage path.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvidenceResponse" }
+        "403": { $ref: "#/components/responses/ProblemResponse" }
+    patch:
+      operationId: updateEvidence
+      summary: Update owned evidence metadata
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EvidenceMetadataInput" }
+      responses:
+        "200":
+          description: Evidence metadata updated.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvidenceResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+    delete:
+      operationId: deleteEvidence
+      summary: Delete owned private evidence
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      responses:
+        "204": { description: Metadata and private object deleted. }
+        "403": { $ref: "#/components/responses/ProblemResponse" }
+  /evidence/{evidence}/file:
+    post:
+      operationId: replaceEvidenceFile
+      summary: Replace an owned private evidence file
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - {
+            name: evidence,
+            in: path,
+            required: true,
+            schema: { type: integer },
+          }
+        - { $ref: "#/components/parameters/CsrfToken" }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        "200":
+          description: Private file replaced and processing states reset truthfully.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EvidenceResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+  /evidence/{evidence}/download:
+    get:
+      operationId: downloadEvidence
+      summary: Download an owned private evidence file
+      tags: [Profile]
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - {
+            name: evidence,
+            in: path,
+            required: true,
+            schema: { type: integer },
+          }
+      responses:
+        "200":
+          description: Private file stream.
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
+        "403": { $ref: "#/components/responses/ProblemResponse" }
+        "404": { $ref: "#/components/responses/ProblemResponse" }
+  /analysis:
+    post:
+      operationId: startAnalysis
+      summary: Explicitly start or reuse an identical evidence analysis
+      tags: [Analysis]
+      security: [{ cookieAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/CsrfToken" }]
+      responses:
+        "202":
+          description: Analysis was queued or is not configured.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AnalysisResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+  /analysis/current:
+    get:
+      operationId: getCurrentAnalysis
+      summary: Poll the latest analysis state
+      tags: [Analysis]
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: Latest analysis, or null.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/NullableAnalysisResponse" }
+  /analysis/{analysis}/confirm:
+    post:
+      operationId: confirmAnalysisSuggestions
+      summary: Confirm selected suggestions into an immutable DNA version
+      tags: [Analysis]
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - { $ref: "#/components/parameters/CsrfToken" }
+        - name: analysis
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ConfirmSuggestionsInput" }
+      responses:
+        "201":
+          description: Created or idempotently returned snapshot.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DnaResponse" }
+        "409": { $ref: "#/components/responses/ProblemResponse" }
+        "422": { $ref: "#/components/responses/ValidationProblemResponse" }
+  /dna:
+    get:
+      operationId: getLatestDna
+      summary: Get the latest confirmed DNA version
+      tags: [Talent DNA]
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: Latest snapshot, or null.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/NullableDnaResponse" }
+  /dna/skills/{snapshotSkill}:
+    get:
+      operationId: getDnaSkill
+      summary: Get one skill from an owned snapshot
+      tags: [Talent DNA]
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - name: snapshotSkill
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Skill detail.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DnaSkillResponse" }
+        "404": { $ref: "#/components/responses/ProblemResponse" }
 components:
   securitySchemes:
     cookieAuth:
@@ -241,7 +594,17 @@ components:
     NextStep:
       type: string
       nullable: true
-      enum: [verify_email, consent, profile_setup, admin]
+      enum:
+        [
+          verify_email,
+          consent,
+          profile_setup,
+          profile_review,
+          analysis,
+          skill_review,
+          dna,
+          admin,
+        ]
     PublicUser:
       type: object
       additionalProperties: false
@@ -262,7 +625,8 @@ components:
     AuthState:
       type: object
       additionalProperties: false
-      required: [authenticated, user, email_verified, consents, next_step]
+      required:
+        [authenticated, user, email_verified, consents, next_step, profile]
       properties:
         authenticated: { type: boolean }
         user:
@@ -272,6 +636,383 @@ components:
         email_verified: { type: boolean }
         consents: { $ref: "#/components/schemas/ConsentState" }
         next_step: { $ref: "#/components/schemas/NextStep" }
+        profile:
+          type: object
+          nullable: true
+          required: [current_step, input_complete]
+          properties:
+            current_step: { type: integer, minimum: 1, maximum: 4 }
+            input_complete: { type: boolean }
+    Profile:
+      type: object
+      additionalProperties: false
+      required:
+        [
+          id,
+          name,
+          field,
+          current_stage,
+          career_direction,
+          professional_interest,
+          vision,
+          strengths,
+          current_step,
+          status,
+          input_completed_at,
+          project_count,
+          evidence_count,
+          updated_at,
+        ]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        field:
+          {
+            type: string,
+            enum: [web, english, marketing, business_administration],
+            nullable: true,
+          }
+        current_stage: { type: string, nullable: true }
+        career_direction: { type: string, nullable: true }
+        professional_interest: { type: string, nullable: true }
+        vision: { type: string, nullable: true }
+        strengths: { type: array, items: { type: string } }
+        current_step: { type: integer, minimum: 1, maximum: 4 }
+        status: { type: string, enum: [draft, input_complete] }
+        input_completed_at: { type: string, format: date-time, nullable: true }
+        project_count: { type: integer, minimum: 0 }
+        evidence_count: { type: integer, minimum: 0 }
+        updated_at: { type: string, format: date-time, nullable: true }
+    ProfileResponse:
+      type: object
+      additionalProperties: false
+      required: [data]
+      properties:
+        data: { $ref: "#/components/schemas/Profile" }
+    DirectionInput:
+      type: object
+      additionalProperties: false
+      properties:
+        field:
+          {
+            type: string,
+            enum: [web, english, marketing, business_administration],
+            nullable: true,
+          }
+        current_stage: { type: string, nullable: true, maxLength: 255 }
+        career_direction: { type: string, nullable: true, maxLength: 255 }
+        professional_interest: { type: string, nullable: true, maxLength: 255 }
+    VisionInput:
+      type: object
+      additionalProperties: false
+      properties:
+        vision: { type: string, nullable: true, maxLength: 3000 }
+        strengths:
+          {
+            type: array,
+            nullable: true,
+            maxItems: 10,
+            items: { type: string, maxLength: 80 },
+          }
+    ProjectInput:
+      type: object
+      additionalProperties: false
+      required: [title, is_team]
+      properties:
+        title: { type: string, maxLength: 255 }
+        description: { type: string, nullable: true, maxLength: 5000 }
+        contribution: { type: string, nullable: true, maxLength: 5000 }
+        role: { type: string, nullable: true, maxLength: 255 }
+        tools:
+          {
+            type: array,
+            nullable: true,
+            maxItems: 30,
+            items: { type: string, maxLength: 80 },
+          }
+        outcome: { type: string, nullable: true, maxLength: 3000 }
+        project_date: { type: string, format: date, nullable: true }
+        is_team: { type: boolean }
+    Project:
+      allOf:
+        - { $ref: "#/components/schemas/ProjectInput" }
+        - type: object
+          required: [id, evidence_count, created_at, updated_at]
+          properties:
+            id: { type: integer }
+            evidence_count: { type: integer, minimum: 0 }
+            created_at: { type: string, format: date-time, nullable: true }
+            updated_at: { type: string, format: date-time, nullable: true }
+    ProjectResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: "#/components/schemas/Project" }
+    ProjectListResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { type: array, items: { $ref: "#/components/schemas/Project" } }
+    EvidenceInput:
+      type: object
+      required: [title, type]
+      properties:
+        project_id: { type: integer, nullable: true }
+        title: { type: string, maxLength: 255 }
+        type: { type: string, enum: [file, link] }
+        description: { type: string, nullable: true, maxLength: 3000 }
+        context: { type: string, nullable: true, maxLength: 3000 }
+        link_url: { type: string, format: uri, nullable: true, maxLength: 2048 }
+        file: { type: string, format: binary, nullable: true }
+    EvidenceMetadataInput:
+      type: object
+      additionalProperties: false
+      properties:
+        project_id: { type: integer, nullable: true }
+        title: { type: string, maxLength: 255 }
+        description: { type: string, nullable: true, maxLength: 3000 }
+        context: { type: string, nullable: true, maxLength: 3000 }
+        link_url: { type: string, format: uri, nullable: true, maxLength: 2048 }
+    Evidence:
+      type: object
+      additionalProperties: false
+      required:
+        [
+          id,
+          project_id,
+          title,
+          type,
+          description,
+          context,
+          link_url,
+          original_filename,
+          mime_type,
+          size_bytes,
+          upload_status,
+          validation_status,
+          read_status,
+          analysis_status,
+          content_version,
+          download_url,
+          created_at,
+          updated_at,
+        ]
+      properties:
+        id: { type: integer }
+        project_id: { type: integer, nullable: true }
+        title: { type: string }
+        type: { type: string, enum: [file, link] }
+        description: { type: string, nullable: true }
+        context: { type: string, nullable: true }
+        link_url: { type: string, format: uri, nullable: true }
+        original_filename: { type: string, nullable: true }
+        mime_type: { type: string, nullable: true }
+        size_bytes: { type: integer, nullable: true }
+        upload_status: { type: string, enum: [uploaded, not_applicable] }
+        validation_status:
+          { type: string, enum: [type_and_size_validated, link_saved_unread] }
+        read_status: { type: string, enum: [not_read, read] }
+        analysis_status: { type: string, enum: [not_analyzed, analyzed] }
+        content_version: { type: integer, minimum: 1 }
+        download_url: { type: string, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+    EvidenceLimits:
+      type: object
+      required: [max_items, max_file_size_kb, allowed_extensions, temporary]
+      properties:
+        max_items: { type: integer }
+        max_file_size_kb: { type: integer }
+        allowed_extensions: { type: array, items: { type: string } }
+        temporary: { type: boolean, enum: [true] }
+    EvidenceResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: "#/components/schemas/Evidence" }
+        limits: { $ref: "#/components/schemas/EvidenceLimits" }
+    EvidenceListResponse:
+      type: object
+      required: [data, limits]
+      properties:
+        data: { type: array, items: { $ref: "#/components/schemas/Evidence" } }
+        limits: { $ref: "#/components/schemas/EvidenceLimits" }
+    EvidenceReference:
+      type: object
+      required: [evidence_id, kind, start, end, quote, observation]
+      properties:
+        evidence_id: { type: integer }
+        kind:
+          { type: string, enum: [line, paragraph, page, visual, page_visual] }
+        start: { type: integer, minimum: 1 }
+        end: { type: integer, minimum: 1 }
+        quote: { type: string, nullable: true }
+        observation: { type: string, nullable: true }
+    SkillSuggestion:
+      type: object
+      required:
+        [
+          id,
+          skill_key,
+          skill_name,
+          within_assessment_scope,
+          rationale,
+          references,
+          limitations,
+        ]
+      properties:
+        id: { type: integer }
+        skill_key: { type: string, nullable: true }
+        skill_name: { type: string }
+        within_assessment_scope: { type: boolean }
+        rationale: { type: string }
+        references:
+          {
+            type: array,
+            items: { $ref: "#/components/schemas/EvidenceReference" },
+          }
+        limitations: { type: array, items: { type: string } }
+    AnalysisInputState:
+      type: object
+      required:
+        [
+          evidence_id,
+          title,
+          filename,
+          status,
+          error_code,
+          error_message,
+          is_partial,
+        ]
+      properties:
+        evidence_id: { type: integer, nullable: true }
+        title: { type: string, nullable: true }
+        filename: { type: string, nullable: true }
+        status: { type: string, enum: [pending, read, failed, source_deleted] }
+        error_code: { type: string, nullable: true }
+        error_message: { type: string, nullable: true }
+        is_partial: { type: boolean }
+    AnalysisRun:
+      type: object
+      required:
+        [
+          id,
+          status,
+          progress,
+          is_partial,
+          provider,
+          model,
+          failure_code,
+          failure_message,
+          suggestions,
+          inputs,
+          created_at,
+          completed_at,
+        ]
+      properties:
+        id: { type: integer }
+        status:
+          {
+            type: string,
+            enum:
+              [
+                queued,
+                processing,
+                retrying,
+                ready,
+                partial,
+                failed,
+                not_configured,
+                stale,
+              ],
+          }
+        progress: { type: integer, minimum: 0, maximum: 100 }
+        is_partial: { type: boolean }
+        provider: { type: string, nullable: true }
+        model: { type: string, nullable: true }
+        failure_code: { type: string, nullable: true }
+        failure_message: { type: string, nullable: true }
+        suggestions:
+          {
+            type: array,
+            items: { $ref: "#/components/schemas/SkillSuggestion" },
+          }
+        inputs:
+          {
+            type: array,
+            items: { $ref: "#/components/schemas/AnalysisInputState" },
+          }
+        created_at: { type: string, format: date-time, nullable: true }
+        completed_at: { type: string, format: date-time, nullable: true }
+    AnalysisResponse:
+      type: object
+      required: [data]
+      properties: { data: { $ref: "#/components/schemas/AnalysisRun" } }
+    NullableAnalysisResponse:
+      type: object
+      required: [data]
+      properties:
+        {
+          data:
+            {
+              type: object,
+              allOf: [{ $ref: "#/components/schemas/AnalysisRun" }],
+              nullable: true,
+            },
+        }
+    ConfirmSuggestionsInput:
+      type: object
+      additionalProperties: false
+      required: [suggestion_ids, idempotency_key]
+      properties:
+        suggestion_ids:
+          {
+            type: array,
+            minItems: 1,
+            uniqueItems: true,
+            items: { type: integer },
+          }
+        idempotency_key: { type: string, maxLength: 100 }
+    DnaSkill:
+      allOf:
+        - { $ref: "#/components/schemas/SkillSuggestion" }
+        - type: object
+          required: [assessment_status]
+          properties:
+            assessment_status: { type: string, enum: [not_assessed] }
+    DnaSnapshot:
+      type: object
+      required: [id, version, confirmed_at, skills]
+      properties:
+        id: { type: integer }
+        version: { type: integer, minimum: 1 }
+        confirmed_at: { type: string, format: date-time }
+        skills:
+          {
+            type: array,
+            minItems: 1,
+            items: { $ref: "#/components/schemas/DnaSkill" },
+          }
+    DnaResponse:
+      type: object
+      required: [data]
+      properties: { data: { $ref: "#/components/schemas/DnaSnapshot" } }
+    NullableDnaResponse:
+      type: object
+      required: [data]
+      properties:
+        {
+          data:
+            {
+              type: object,
+              allOf: [{ $ref: "#/components/schemas/DnaSnapshot" }],
+              nullable: true,
+            },
+        }
+    DnaSkillResponse:
+      type: object
+      required: [data]
+      properties: { data: { $ref: "#/components/schemas/DnaSkill" } }
     RegisterRequest:
       type: object
       additionalProperties: false

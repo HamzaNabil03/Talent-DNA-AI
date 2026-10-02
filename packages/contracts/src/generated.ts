@@ -186,6 +186,277 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/profile": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Read the current student's profile input */
+    get: operations["getProfile"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/direction": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Save a partial direction draft */
+    patch: operations["updateProfileDirection"];
+    trace?: never;
+  };
+  "/profile/vision": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Save a partial student-view draft */
+    patch: operations["updateProfileVision"];
+    trace?: never;
+  };
+  "/profile/complete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Validate and mark profile input complete
+     * @description The server derives completion. This does not imply analysis, assessment, or a Talent DNA snapshot.
+     */
+    post: operations["completeProfileInput"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/projects": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List the current student's projects */
+    get: operations["listProjects"];
+    put?: never;
+    /** Create a project */
+    post: operations["createProject"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/projects/{project}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project: number;
+      };
+      cookie?: never;
+    };
+    /** Read an owned project */
+    get: operations["getProject"];
+    /** Replace an owned project */
+    put: operations["updateProject"];
+    post?: never;
+    /**
+     * Delete an unlinked owned project
+     * @description Refuses deletion while evidence is linked; evidence is never deleted implicitly.
+     */
+    delete: operations["deleteProject"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/evidence": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List the current student's private evidence */
+    get: operations["listEvidence"];
+    put?: never;
+    /** Upload a private file or save an unread external link */
+    post: operations["createEvidence"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/evidence/{evidence}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        evidence: number;
+      };
+      cookie?: never;
+    };
+    /** Read owned evidence metadata */
+    get: operations["getEvidence"];
+    put?: never;
+    post?: never;
+    /** Delete owned private evidence */
+    delete: operations["deleteEvidence"];
+    options?: never;
+    head?: never;
+    /** Update owned evidence metadata */
+    patch: operations["updateEvidence"];
+    trace?: never;
+  };
+  "/evidence/{evidence}/file": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Replace an owned private evidence file */
+    post: operations["replaceEvidenceFile"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/evidence/{evidence}/download": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Download an owned private evidence file */
+    get: operations["downloadEvidence"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/analysis": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Explicitly start or reuse an identical evidence analysis */
+    post: operations["startAnalysis"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/analysis/current": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Poll the latest analysis state */
+    get: operations["getCurrentAnalysis"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/analysis/{analysis}/confirm": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Confirm selected suggestions into an immutable DNA version */
+    post: operations["confirmAnalysisSuggestions"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/dna": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the latest confirmed DNA version */
+    get: operations["getLatestDna"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/dna/skills/{snapshotSkill}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get one skill from an owned snapshot */
+    get: operations["getDnaSkill"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -201,7 +472,16 @@ export interface components {
     /** @enum {string} */
     UserRole: "student" | "admin";
     /** @enum {string|null} */
-    NextStep: "verify_email" | "consent" | "profile_setup" | "admin" | null;
+    NextStep:
+      | "verify_email"
+      | "consent"
+      | "profile_setup"
+      | "profile_review"
+      | "analysis"
+      | "skill_review"
+      | "dna"
+      | "admin"
+      | null;
     PublicUser: {
       id: number;
       name: string;
@@ -220,6 +500,216 @@ export interface components {
       email_verified: boolean;
       consents: components["schemas"]["ConsentState"];
       next_step: components["schemas"]["NextStep"];
+      profile: {
+        current_step: number;
+        input_complete: boolean;
+      } | null;
+    };
+    Profile: {
+      id: number;
+      name: string;
+      /** @enum {string|null} */
+      field: "web" | "english" | "marketing" | "business_administration" | null;
+      current_stage: string | null;
+      career_direction: string | null;
+      professional_interest: string | null;
+      vision: string | null;
+      strengths: string[];
+      current_step: number;
+      /** @enum {string} */
+      status: "draft" | "input_complete";
+      /** Format: date-time */
+      input_completed_at: string | null;
+      project_count: number;
+      evidence_count: number;
+      /** Format: date-time */
+      updated_at: string | null;
+    };
+    ProfileResponse: {
+      data: components["schemas"]["Profile"];
+    };
+    DirectionInput: {
+      /** @enum {string|null} */
+      field?:
+        "web" | "english" | "marketing" | "business_administration" | null;
+      current_stage?: string | null;
+      career_direction?: string | null;
+      professional_interest?: string | null;
+    };
+    VisionInput: {
+      vision?: string | null;
+      strengths?: string[] | null;
+    };
+    ProjectInput: {
+      title: string;
+      description?: string | null;
+      contribution?: string | null;
+      role?: string | null;
+      tools?: string[] | null;
+      outcome?: string | null;
+      /** Format: date */
+      project_date?: string | null;
+      is_team: boolean;
+    };
+    Project: components["schemas"]["ProjectInput"] & {
+      id: number;
+      evidence_count: number;
+      /** Format: date-time */
+      created_at: string | null;
+      /** Format: date-time */
+      updated_at: string | null;
+    };
+    ProjectResponse: {
+      data: components["schemas"]["Project"];
+    };
+    ProjectListResponse: {
+      data: components["schemas"]["Project"][];
+    };
+    EvidenceInput: {
+      project_id?: number | null;
+      title: string;
+      /** @enum {string} */
+      type: "file" | "link";
+      description?: string | null;
+      context?: string | null;
+      /** Format: uri */
+      link_url?: string | null;
+      /** Format: binary */
+      file?: string | null;
+    };
+    EvidenceMetadataInput: {
+      project_id?: number | null;
+      title?: string;
+      description?: string | null;
+      context?: string | null;
+      /** Format: uri */
+      link_url?: string | null;
+    };
+    Evidence: {
+      id: number;
+      project_id: number | null;
+      title: string;
+      /** @enum {string} */
+      type: "file" | "link";
+      description: string | null;
+      context: string | null;
+      /** Format: uri */
+      link_url: string | null;
+      original_filename: string | null;
+      mime_type: string | null;
+      size_bytes: number | null;
+      /** @enum {string} */
+      upload_status: "uploaded" | "not_applicable";
+      /** @enum {string} */
+      validation_status: "type_and_size_validated" | "link_saved_unread";
+      /** @enum {string} */
+      read_status: "not_read" | "read";
+      /** @enum {string} */
+      analysis_status: "not_analyzed" | "analyzed";
+      content_version: number;
+      download_url: string | null;
+      /** Format: date-time */
+      created_at: string | null;
+      /** Format: date-time */
+      updated_at: string | null;
+    };
+    EvidenceLimits: {
+      max_items: number;
+      max_file_size_kb: number;
+      allowed_extensions: string[];
+      /** @enum {boolean} */
+      temporary: true;
+    };
+    EvidenceResponse: {
+      data: components["schemas"]["Evidence"];
+      limits?: components["schemas"]["EvidenceLimits"];
+    };
+    EvidenceListResponse: {
+      data: components["schemas"]["Evidence"][];
+      limits: components["schemas"]["EvidenceLimits"];
+    };
+    EvidenceReference: {
+      evidence_id: number;
+      /** @enum {string} */
+      kind: "line" | "paragraph" | "page" | "visual" | "page_visual";
+      start: number;
+      end: number;
+      quote: string | null;
+      observation: string | null;
+    };
+    SkillSuggestion: {
+      id: number;
+      skill_key: string | null;
+      skill_name: string;
+      within_assessment_scope: boolean;
+      rationale: string;
+      references: components["schemas"]["EvidenceReference"][];
+      limitations: string[];
+    };
+    AnalysisInputState: {
+      evidence_id: number | null;
+      title: string | null;
+      filename: string | null;
+      /** @enum {string} */
+      status: "pending" | "read" | "failed" | "source_deleted";
+      error_code: string | null;
+      error_message: string | null;
+      is_partial: boolean;
+    };
+    AnalysisRun: {
+      id: number;
+      /** @enum {string} */
+      status:
+        | "queued"
+        | "processing"
+        | "retrying"
+        | "ready"
+        | "partial"
+        | "failed"
+        | "not_configured"
+        | "stale";
+      progress: number;
+      is_partial: boolean;
+      provider: string | null;
+      model: string | null;
+      failure_code: string | null;
+      failure_message: string | null;
+      suggestions: components["schemas"]["SkillSuggestion"][];
+      inputs: components["schemas"]["AnalysisInputState"][];
+      /** Format: date-time */
+      created_at: string | null;
+      /** Format: date-time */
+      completed_at: string | null;
+    };
+    AnalysisResponse: {
+      data: components["schemas"]["AnalysisRun"];
+    };
+    NullableAnalysisResponse: {
+      data: components["schemas"]["AnalysisRun"] | null;
+    };
+    ConfirmSuggestionsInput: {
+      suggestion_ids: number[];
+      idempotency_key: string;
+    };
+    DnaSkill: components["schemas"]["SkillSuggestion"] & {
+      /** @enum {string} */
+      assessment_status: "not_assessed";
+    };
+    DnaSnapshot: {
+      id: number;
+      version: number;
+      /** Format: date-time */
+      confirmed_at: string;
+      skills: components["schemas"]["DnaSkill"][];
+    };
+    DnaResponse: {
+      data: components["schemas"]["DnaSnapshot"];
+    };
+    NullableDnaResponse: {
+      data: components["schemas"]["DnaSnapshot"] | null;
+    };
+    DnaSkillResponse: {
+      data: components["schemas"]["DnaSkill"];
     };
     RegisterRequest: {
       name: string;
@@ -555,6 +1045,536 @@ export interface operations {
       401: components["responses"]["ProblemResponse"];
       403: components["responses"]["ProblemResponse"];
       422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  getProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Profile input and progress. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProfileResponse"];
+        };
+      };
+      401: components["responses"]["ProblemResponse"];
+      403: components["responses"]["ProblemResponse"];
+    };
+  };
+  updateProfileDirection: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DirectionInput"];
+      };
+    };
+    responses: {
+      /** @description Direction saved. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProfileResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  updateProfileVision: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["VisionInput"];
+      };
+    };
+    responses: {
+      /** @description Student view saved. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProfileResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  completeProfileInput: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Input requirements met. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProfileResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  listProjects: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Owned projects. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProjectListResponse"];
+        };
+      };
+      401: components["responses"]["ProblemResponse"];
+    };
+  };
+  createProject: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProjectInput"];
+      };
+    };
+    responses: {
+      /** @description Project created. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  getProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Owned project. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+      403: components["responses"]["ProblemResponse"];
+    };
+  };
+  updateProject: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path: {
+        project: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProjectInput"];
+      };
+    };
+    responses: {
+      /** @description Project updated. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProjectResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  deleteProject: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path: {
+        project: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Project deleted. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      409: components["responses"]["ProblemResponse"];
+    };
+  };
+  listEvidence: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Owned private evidence and temporary limits. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["EvidenceListResponse"];
+        };
+      };
+      401: components["responses"]["ProblemResponse"];
+    };
+  };
+  createEvidence: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": components["schemas"]["EvidenceInput"];
+      };
+    };
+    responses: {
+      /** @description Evidence saved; no content reading or analysis has occurred. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["EvidenceResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+      429: components["responses"]["ProblemResponse"];
+    };
+  };
+  getEvidence: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        evidence: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Owned evidence metadata without an internal storage path. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["EvidenceResponse"];
+        };
+      };
+      403: components["responses"]["ProblemResponse"];
+    };
+  };
+  deleteEvidence: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path: {
+        evidence: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Metadata and private object deleted. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      403: components["responses"]["ProblemResponse"];
+    };
+  };
+  updateEvidence: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path: {
+        evidence: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EvidenceMetadataInput"];
+      };
+    };
+    responses: {
+      /** @description Evidence metadata updated. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["EvidenceResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  replaceEvidenceFile: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path: {
+        evidence: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": {
+          /** Format: binary */
+          file: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Private file replaced and processing states reset truthfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["EvidenceResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  downloadEvidence: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        evidence: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Private file stream. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/octet-stream": string;
+        };
+      };
+      403: components["responses"]["ProblemResponse"];
+      404: components["responses"]["ProblemResponse"];
+    };
+  };
+  startAnalysis: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Analysis was queued or is not configured. */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AnalysisResponse"];
+        };
+      };
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  getCurrentAnalysis: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Latest analysis, or null. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NullableAnalysisResponse"];
+        };
+      };
+    };
+  };
+  confirmAnalysisSuggestions: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Value issued by GET /sanctum/csrf-cookie for same-origin state-changing requests. */
+        "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+      };
+      path: {
+        analysis: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ConfirmSuggestionsInput"];
+      };
+    };
+    responses: {
+      /** @description Created or idempotently returned snapshot. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DnaResponse"];
+        };
+      };
+      409: components["responses"]["ProblemResponse"];
+      422: components["responses"]["ValidationProblemResponse"];
+    };
+  };
+  getLatestDna: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Latest snapshot, or null. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NullableDnaResponse"];
+        };
+      };
+    };
+  };
+  getDnaSkill: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        snapshotSkill: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Skill detail. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DnaSkillResponse"];
+        };
+      };
+      404: components["responses"]["ProblemResponse"];
     };
   };
 }

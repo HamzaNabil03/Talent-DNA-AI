@@ -59,5 +59,9 @@ export function routeForNextStep(nextStep: AuthState["next_step"]): string {
   if (nextStep === "verify_email") return "/auth/verify-email";
   if (nextStep === "consent") return "/onboarding/consent";
   if (nextStep === "profile_setup") return "/profile/setup";
+  if (nextStep === "profile_review") return "/review";
+  if (nextStep === "analysis" || nextStep === "skill_review")
+    return "/analysis";
+  if (nextStep === "dna") return "/dna";
   return "/auth/sign-in";
 }

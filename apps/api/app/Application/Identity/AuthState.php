@@ -19,6 +19,7 @@ final class AuthState
                 'email_verified' => false,
                 'consents' => ['terms' => false, 'privacy' => false, 'ai_processing' => false],
                 'next_step' => null,
+                'profile' => null,
             ];
         }
 
@@ -34,10 +35,16 @@ final class AuthState
             'ai_processing' => in_array($versions[ConsentType::AiProcessing->value], $accepted, true),
         ];
 
+        $profile = $user->profile()->firstOrCreate();
+        $latestAnalysis = $user->analysisRuns()->latest()->first();
         $nextStep = match (true) {
             $user->roleEnum() === UserRole::Admin => NextStep::Admin,
             ! $user->hasVerifiedEmail() => NextStep::VerifyEmail,
             ! $consents['ai_processing'] => NextStep::Consent,
+            $user->talentDnaSnapshots()->exists() => NextStep::Dna,
+            in_array($latestAnalysis?->status, ['ready', 'partial'], true) => NextStep::SkillReview,
+            $latestAnalysis !== null => NextStep::Analysis,
+            $profile->input_completed_at !== null => NextStep::ProfileReview,
             default => NextStep::ProfileSetup,
         };
 
@@ -52,6 +59,10 @@ final class AuthState
             'email_verified' => $user->hasVerifiedEmail(),
             'consents' => $consents,
             'next_step' => $nextStep->value,
+            'profile' => [
+                'current_step' => $profile->current_step,
+                'input_complete' => $profile->input_completed_at !== null,
+            ],
         ];
     }
 }

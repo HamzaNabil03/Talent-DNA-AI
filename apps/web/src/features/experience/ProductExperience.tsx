@@ -74,7 +74,13 @@ function DirectionArrow({ forward = false }: { forward?: boolean }) {
   return <Icon aria-hidden="true" size={16} />;
 }
 
-function ProductHeader({ section = "بناء الملف" }: { section?: string }) {
+export function ProductHeader({
+  section = "بناء الملف",
+  onBack,
+}: {
+  section?: string;
+  onBack?: () => void;
+}) {
   const c = useCopy();
   const navigate = useNavigate();
   return (
@@ -85,7 +91,10 @@ function ProductHeader({ section = "بناء الملف" }: { section?: string }
       </span>
       <div className="product-header__brand">
         <img src={logo} width="150" height="50" alt="Talent DNA AI" />
-        <button type="button" onClick={() => navigate(-1)}>
+        <button
+          type="button"
+          onClick={() => (onBack ? onBack() : navigate(-1))}
+        >
           {c("رجوع", "Back")} <DirectionArrow />
         </button>
       </div>

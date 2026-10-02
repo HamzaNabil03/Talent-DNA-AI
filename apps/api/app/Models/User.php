@@ -9,6 +9,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -45,6 +46,36 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(UserConsent::class);
     }
 
+    /** @return HasOne<Profile, $this> */
+    public function profile(): HasOne
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    /** @return HasMany<Project, $this> */
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    /** @return HasMany<Evidence, $this> */
+    public function evidence(): HasMany
+    {
+        return $this->hasMany(Evidence::class);
+    }
+
+    /** @return HasMany<AnalysisRun, $this> */
+    public function analysisRuns(): HasMany
+    {
+        return $this->hasMany(AnalysisRun::class);
+    }
+
+    /** @return HasMany<TalentDnaSnapshot, $this> */
+    public function talentDnaSnapshots(): HasMany
+    {
+        return $this->hasMany(TalentDnaSnapshot::class);
+    }
+
     public function sendEmailVerificationNotification(): void
     {
         $this->notify(new VerifyEmailNotification);
@@ -74,5 +105,12 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'role' => UserRole::class,
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::created(function (User $user): void {
+            $user->profile()->firstOrCreate();
+        });
     }
 }

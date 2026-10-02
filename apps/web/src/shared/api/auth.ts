@@ -43,17 +43,23 @@ async function csrf(): Promise<void> {
     );
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function apiRequest<T>(
+  path: string,
+  init: RequestInit = {},
+): Promise<T> {
   const method = (init.method ?? "GET").toUpperCase();
   if (method !== "GET" && method !== "HEAD") await csrf();
 
   const xsrf = cookie("XSRF-TOKEN");
+  const isFormData = init.body instanceof FormData;
   const response = await fetch(`/api/v1${path}`, {
     ...init,
     credentials: "include",
     headers: {
       Accept: "application/json",
-      ...(init.body ? { "Content-Type": "application/json" } : {}),
+      ...(init.body && !isFormData
+        ? { "Content-Type": "application/json" }
+        : {}),
       ...(xsrf ? { "X-XSRF-TOKEN": decodeURIComponent(xsrf) } : {}),
       ...init.headers,
     },
@@ -76,35 +82,35 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export const authApi = {
-  session: () => request<AuthState>("/auth/session"),
+  session: () => apiRequest<AuthState>("/auth/session"),
   register: (body: RegisterRequest) =>
-    request<AuthState>("/auth/register", {
+    apiRequest<AuthState>("/auth/register", {
       method: "POST",
       body: JSON.stringify(body),
     }),
   login: (body: LoginRequest) =>
-    request<AuthState>("/auth/login", {
+    apiRequest<AuthState>("/auth/login", {
       method: "POST",
       body: JSON.stringify(body),
     }),
-  logout: () => request<void>("/auth/logout", { method: "POST" }),
+  logout: () => apiRequest<void>("/auth/logout", { method: "POST" }),
   resendVerification: () =>
-    request<{ status: "verification_link_sent" | "already_verified" }>(
+    apiRequest<{ status: "verification_link_sent" | "already_verified" }>(
       "/auth/email/verification-notification",
       { method: "POST" },
     ),
   forgotPassword: (body: components["schemas"]["ForgotPasswordRequest"]) =>
-    request<{ status: string }>("/auth/forgot-password", {
+    apiRequest<{ status: string }>("/auth/forgot-password", {
       method: "POST",
       body: JSON.stringify(body),
     }),
   resetPassword: (body: ResetPasswordRequest) =>
-    request<{ status: string }>("/auth/reset-password", {
+    apiRequest<{ status: string }>("/auth/reset-password", {
       method: "POST",
       body: JSON.stringify(body),
     }),
   acceptAiConsent: () =>
-    request<AuthState>("/consents/ai-processing", {
+    apiRequest<AuthState>("/consents/ai-processing", {
       method: "POST",
       body: JSON.stringify({ accept_ai_processing: true }),
     }),

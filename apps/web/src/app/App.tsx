@@ -17,21 +17,16 @@ import {
   VerifyEmailPage,
 } from "../features/auth/AuthPages";
 import { ConsentPage } from "../features/consent/ConsentPage";
-import { LandingPage } from "../features/landing/LandingPage";
 import {
   AnalysisPage,
-  AssessmentPage,
-  BuilderPage,
-  CardBuilderPage,
   DnaPage,
-  OpportunitiesPage,
-  PrivacyPage,
-  PublicCardPage,
-  ReadinessPage,
-  ResultPage,
-  ReviewPage,
   SkillDetailPage,
-} from "../features/experience/ProductExperience";
+} from "../features/analysis/AnalysisExperience";
+import { LandingPage } from "../features/landing/LandingPage";
+import {
+  ProfileBuilderPage,
+  ProfileReviewPage,
+} from "../features/profile/ProfileJourney";
 import { authApi } from "../shared/api/auth";
 import {
   SessionProvider,
@@ -127,54 +122,21 @@ function StepGuard({
 }
 
 const profileRoutes = [
-  { path: "/builder/direction", render: () => <BuilderPage step={1} /> },
-  { path: "/builder/projects", render: () => <BuilderPage step={2} /> },
-  { path: "/builder/evidence", render: () => <BuilderPage step={3} /> },
-  { path: "/builder/vision", render: () => <BuilderPage step={4} /> },
-  { path: "/review", render: () => <ReviewPage /> },
-  { path: "/analysis/queued", render: () => <AnalysisPage state="queued" /> },
-  { path: "/analysis/failure", render: () => <AnalysisPage state="failure" /> },
-  { path: "/analysis/empty", render: () => <AnalysisPage state="empty" /> },
-  {
-    path: "/analysis/confirmation",
-    render: () => <AnalysisPage state="confirmation" />,
-  },
+  { path: "/builder/direction", render: () => <ProfileBuilderPage step={1} /> },
+  { path: "/builder/projects", render: () => <ProfileBuilderPage step={2} /> },
+  { path: "/builder/evidence", render: () => <ProfileBuilderPage step={3} /> },
+  { path: "/builder/vision", render: () => <ProfileBuilderPage step={4} /> },
+  { path: "/review", render: () => <ProfileReviewPage /> },
+  { path: "/analysis", render: () => <AnalysisPage /> },
+  { path: "/analysis/*", render: () => <AnalysisPage /> },
   { path: "/dna", render: () => <DnaPage /> },
-  { path: "/dna/skills/:skillId", render: () => <SkillDetailPage /> },
-  { path: "/readiness", render: () => <ReadinessPage /> },
-  { path: "/readiness/resume", render: () => <ReadinessPage resume /> },
-  { path: "/assessment", render: () => <AssessmentPage /> },
-  {
-    path: "/assessment/resume",
-    render: () => <AssessmentPage mode="resume" />,
-  },
-  {
-    path: "/assessment/fail",
-    render: () => <AssessmentPage mode="fail" />,
-  },
-  { path: "/results", render: () => <ResultPage /> },
-  { path: "/opportunities", render: () => <OpportunitiesPage /> },
-  {
-    path: "/card-builder/private",
-    render: () => <CardBuilderPage status="private" />,
-  },
-  {
-    path: "/card-builder/live",
-    render: () => <CardBuilderPage status="live" />,
-  },
-  {
-    path: "/card-builder/revoked",
-    render: () => <CardBuilderPage status="revoked" />,
-  },
-  {
-    path: "/privacy/private",
-    render: () => <PrivacyPage status="private" />,
-  },
-  { path: "/privacy/live", render: () => <PrivacyPage status="live" /> },
-  {
-    path: "/privacy/revoked",
-    render: () => <PrivacyPage status="revoked" />,
-  },
+  { path: "/dna/skills/:id", render: () => <SkillDetailPage /> },
+  { path: "/readiness/*", render: () => <Navigate replace to="/review" /> },
+  { path: "/assessment/*", render: () => <Navigate replace to="/review" /> },
+  { path: "/results", render: () => <Navigate replace to="/review" /> },
+  { path: "/opportunities", render: () => <Navigate replace to="/review" /> },
+  { path: "/card-builder/*", render: () => <Navigate replace to="/review" /> },
+  { path: "/privacy/*", render: () => <Navigate replace to="/review" /> },
 ];
 
 export function App() {
@@ -247,12 +209,8 @@ export function App() {
               }
             />
             <Route
-              path="/public-card/private"
-              element={<PublicCardPage status="private" />}
-            />
-            <Route
-              path="/public-card/live"
-              element={<PublicCardPage status="live" />}
+              path="/public-card/*"
+              element={<Navigate replace to="/" />}
             />
             {profileRoutes.map(({ path, render }) => (
               <Route

@@ -10,6 +10,7 @@ const anonymous = {
   email_verified: false,
   consents: { terms: false, privacy: false, ai_processing: false },
   next_step: null,
+  profile: null,
 };
 const unverified = {
   authenticated: true,
@@ -22,6 +23,7 @@ const unverified = {
   email_verified: false,
   consents: { terms: true, privacy: true, ai_processing: false },
   next_step: "verify_email",
+  profile: { current_step: 1, input_complete: false },
 };
 const consentNeeded = {
   ...unverified,
@@ -34,8 +36,51 @@ const complete = {
   next_step: "profile_setup",
 };
 
+const profile = {
+  id: 1,
+  name: "Student",
+  field: null,
+  current_stage: null,
+  career_direction: null,
+  professional_interest: null,
+  vision: null,
+  strengths: [],
+  current_step: 1,
+  status: "draft",
+  input_completed_at: null,
+  project_count: 0,
+  evidence_count: 0,
+  updated_at: "2026-10-01T00:00:00Z",
+};
+const limits = {
+  max_items: 20,
+  max_file_size_kb: 10240,
+  allowed_extensions: ["pdf", "png", "jpg"],
+  temporary: true,
+};
+
 function response(body: unknown, status = 200) {
   return { ok: status >= 200 && status < 300, status, json: async () => body };
+}
+
+function productFetch(saveStatus = 200) {
+  return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    if (url === "/api/v1/auth/session") return response(complete);
+    if (url === "/api/v1/profile" && (!init?.method || init.method === "GET"))
+      return response({ data: profile });
+    if (url === "/api/v1/projects") return response({ data: [] });
+    if (url === "/api/v1/evidence") return response({ data: [], limits });
+    if (url === "/api/v1/analysis/current") return response({ data: null });
+    if (url === "/api/v1/dna") return response({ data: null });
+    if (url === "/sanctum/csrf-cookie") return response({});
+    if (url === "/api/v1/profile/direction") {
+      return saveStatus === 200
+        ? response({ data: { ...profile, current_step: 2 } })
+        : response({ message: "Save failed." }, saveStatus);
+    }
+    return response({});
+  });
 }
 
 describe("identity, authentication, and consent onboarding", () => {
@@ -307,10 +352,9 @@ describe("identity, authentication, and consent onboarding", () => {
     await userEvent.click(screen.getByRole("checkbox"));
     expect(submit).toBeEnabled();
     await userEvent.click(submit);
-    expect(
-      await screen.findByRole("heading", { name: "إلى أين تتجه؟" }),
-    ).toBeInTheDocument();
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    await waitFor(() =>
+      expect(window.location.pathname).toBe("/builder/direction"),
+    );
   });
 
   it.each([
@@ -319,33 +363,14 @@ describe("identity, authentication, and consent onboarding", () => {
     "/builder/evidence",
     "/builder/vision",
     "/review",
-    "/analysis/queued",
-    "/analysis/failure",
-    "/analysis/empty",
-    "/analysis/confirmation",
-    "/dna",
-    "/dna/skills/creative-thinking",
-    "/readiness",
-    "/readiness/resume",
-    "/assessment",
-    "/assessment/resume",
-    "/assessment/fail",
-    "/results",
-    "/opportunities",
-    "/card-builder/private",
-    "/card-builder/live",
-    "/card-builder/revoked",
-    "/privacy/private",
-    "/privacy/live",
-    "/privacy/revoked",
   ])("renders the completed-profile experience at %s", async (path) => {
     window.history.pushState({}, "", path);
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(complete)));
+    vi.stubGlobal("fetch", productFetch());
 
     render(<App />);
 
     await waitFor(() => expect(window.location.pathname).toBe(path));
-    expect(screen.getByRole("main")).toBeInTheDocument();
+    await screen.findByText(/بياناتك محفوظة بشكل خاص|راجع بياناتك الحقيقية/);
     expect(
       screen.queryByRole("heading", {
         name: "مرحبًا بعودتك إلى Talent DNA.",
@@ -353,16 +378,43 @@ describe("identity, authentication, and consent onboarding", () => {
     ).not.toBeInTheDocument();
   });
 
-  it.each(["/public-card/private", "/public-card/live"])(
-    "renders the public experience without authentication at %s",
+  it("does not claim a failed profile save succeeded or navigate forward", async () => {
+    window.history.pushState({}, "", "/builder/direction");
+    vi.stubGlobal("fetch", productFetch(500));
+    render(<App />);
+    const direction = await screen.findByLabelText("الاتجاه المهني *");
+    await userEvent.type(direction, "Frontend");
+    await userEvent.click(screen.getByRole("button", { name: "حفظ ومتابعة" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Save failed.");
+    expect(screen.getByText("لم يتم الحفظ")).toBeInTheDocument();
+    expect(window.location.pathname).not.toBe("/builder/projects");
+  });
+
+  it.each(["/analysis/queued", "/dna"])(
+    "renders real empty analysis and DNA states at %s",
     async (path) => {
       window.history.pushState({}, "", path);
-      vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response(anonymous)));
-
+      vi.stubGlobal("fetch", productFetch());
       render(<App />);
-
-      expect(await screen.findByRole("main")).toBeInTheDocument();
+      expect(
+        await screen.findByText(
+          path === "/dna" ? /لا توجد نسخة بعد/ : /جاهز للبدء/,
+        ),
+      ).toBeInTheDocument();
       expect(window.location.pathname).toBe(path);
+    },
+  );
+
+  it.each(["/results", "/public-card/live"])(
+    "does not expose unimplemented result or public-card routes at %s",
+    async (path) => {
+      window.history.pushState({}, "", path);
+      vi.stubGlobal("fetch", productFetch());
+      render(<App />);
+      await waitFor(() => expect(window.location.pathname).not.toBe(path));
+      if (path === "/public-card/live")
+        expect(window.location.pathname).toBe("/");
+      else expect(window.location.pathname).toBe("/review");
     },
   );
 });

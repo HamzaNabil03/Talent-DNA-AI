@@ -49,6 +49,7 @@ class IdentityAuthTest extends TestCase
         $this->assertDatabaseHas('user_consents', ['user_id' => $user->id, 'type' => 'terms', 'version' => 'terms-v1']);
         $this->assertDatabaseHas('user_consents', ['user_id' => $user->id, 'type' => 'privacy', 'version' => 'privacy-v1']);
         $this->assertDatabaseCount('user_consents', 2);
+        $this->assertDatabaseHas('profiles', ['user_id' => $user->id, 'current_step' => 1]);
         Notification::assertSentTo($user, VerifyEmailNotification::class);
     }
 
