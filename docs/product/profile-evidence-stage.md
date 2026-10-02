@@ -29,7 +29,7 @@ Local development uses the private `evidence` disk rooted under `storage/app/pri
 
 ## Gemini and review boundary
 
-The backend calls the official Gemini Interactions API with `gemini-3.8-flash` and a JSON schema. `GEMINI_API_KEY` is server-only; no browser/Vite variable may contain it. Missing configuration produces a persisted `not_configured` state and never substitutes fake output. The test environment alone binds a deterministic fake provider.
+The backend calls the official Gemini Interactions API with `gemini-3.8-flash` and a JSON schema. Requests use the current `steps` response shape and explicitly set `store=false`, so Google does not retain an Interaction resource for conversation state. `GEMINI_API_KEY` is server-only; no browser/Vite variable may contain it. Missing configuration produces a persisted `not_configured` state and never substitutes fake output. The test environment alone binds a deterministic fake provider.
 
 The processing contract is:
 
@@ -42,7 +42,7 @@ The processing contract is:
 
 ## Privacy and production readiness
 
-Gemini processing sends selected private evidence to Google only after the explicit start action. Google's current abuse-monitoring documentation states that prompts, context, and outputs may be retained for 55 days. This retention must be reflected in the approved privacy notice/consent before enabling real-user production analysis. Google AI Studio logging/data-sharing opt-in must remain disabled for private evidence.
+Gemini processing sends selected private evidence to Google only after the explicit start action. `store=false` opts out of Interactions API conversation-state retention, but it does not remove Google's separate abuse-monitoring retention. Google's current abuse-monitoring documentation states that prompts, context, and outputs may be retained for 55 days. This retention must be reflected in the approved privacy notice/consent before enabling real-user production analysis. Real-user evidence must use a billing-enabled Paid Services project, where prompts and responses are not used for product improvement under Google's current terms. Google AI Studio project logging, dataset contribution, feedback sharing, and data-sharing opt-ins must remain disabled for private evidence.
 
 The application uses inline requests within its lower 10 MiB upload boundary, so it does not create Gemini Files API objects. Production requires a persistent private store that both the web and worker processes can access. A Railway volume mounted to only one service is insufficient for a separate worker; use a private object-storage disk or a verified shared-storage topology. Without it, file analysis is not production-ready.
 
